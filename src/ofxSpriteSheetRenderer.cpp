@@ -1512,6 +1512,7 @@ bool ofxSpriteSheetRenderer::addCircle(float x, float y, float z, float radius, 
 			k+=2;
 		}
 	}
+    return true;
 }
 
 bool ofxSpriteSheetRenderer::addRect(float x, float y, float z, float w, float h, int layer)
