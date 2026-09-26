@@ -127,7 +127,7 @@ void ofxSpriteSheetRenderer::allocate(int widthHeight, int internalGLScaleMode)
 		texture = (ofTexture*) newTexture;
 	}
 	else
-		cerr<<"cannot double allocate ofxSpriteSheetRenderer Texture! Please clearTexture() first"<<endl;
+		std::cerr<<"cannot double allocate ofxSpriteSheetRenderer Texture! Please clearTexture() first"<<endl;
 }
 
 void ofxSpriteSheetRenderer::addMisc(string fileName, int x, int y, int glType)
@@ -313,19 +313,19 @@ bool ofxSpriteSheetRenderer::addTile(int tile_name, int frame, float x, float y,
 	
 	if(texture == NULL)
 	{
-		cerr << "RENDER ERROR: No texture loaded!"  << endl;
+		std::cerr << "RENDER ERROR: No texture loaded!"  << endl;
 		return false;
 	}
 	
 	if(numSprites[layer] >= tilesPerLayer)
 	{
-		cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
+		std::cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
 		return false;
 	}
 	
 	if(layer > numLayers)
 	{
-		cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
+		std::cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
 		return false;
 	}
 	
@@ -419,19 +419,19 @@ bool ofxSpriteSheetRenderer::addRotatedTile(int tile_name, int frame, float x, f
 	
 	if(texture == NULL)
 	{
-		cerr << "RENDER ERROR: No texture loaded!"  << endl;
+		std::cerr << "RENDER ERROR: No texture loaded!"  << endl;
 		return false;
 	}
 	
 	if(numSprites[layer] >= tilesPerLayer)
 	{
-		cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
+		std::cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
 		return false;
 	}
 	
 	if(layer > numLayers)
 	{
-		cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
+		std::cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
 		return false;
 	}
 	
@@ -537,19 +537,19 @@ bool ofxSpriteSheetRenderer::addCenteredTile(int tile_name, int frame, float x, 
 	
 	if(texture == NULL)
 	{
-		cerr << "RENDER ERROR: No texture loaded!"  << endl;
+		std::cerr << "RENDER ERROR: No texture loaded!"  << endl;
 		return false;
 	}
 	
 	if(numSprites[layer] >= tilesPerLayer)
 	{
-		cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
+		std::cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
 		return false;
 	}
 	
 	if(layer > numLayers)
 	{
-		cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
+		std::cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
 		return false;
 	}
 	
@@ -647,19 +647,19 @@ bool ofxSpriteSheetRenderer::addCenterRotatedTile(int tile_name, int frame, floa
 	
 	if(texture == NULL)
 	{
-		cerr << "RENDER ERROR: No texture loaded!"  << endl;
+		std::cerr << "RENDER ERROR: No texture loaded!"  << endl;
 		return false;
 	}
 	
 	if(numSprites[layer] >= tilesPerLayer)
 	{
-		cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
+		std::cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
 		return false;
 	}
 	
 	if(layer > numLayers)
 	{
-		cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
+		std::cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
 		return false;
 	}
 	
@@ -937,25 +937,25 @@ bool ofxSpriteSheetRenderer::addLine(ofVec2f a, ofVec2f b, int width, int layer,
 	
 	if(texture == NULL)
 	{
-		cerr << "RENDER ERROR: No texture loaded!"  << endl;
+		std::cerr << "RENDER ERROR: No texture loaded!"  << endl;
 		return false;
 	}
 	
 	if(numSprites[layer] >= tilesPerLayer)
 	{
-		cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
+		std::cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
 		return false;
 	}
 	
 	if(layer > numLayers)
 	{
-		cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
+		std::cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
 		return false;
 	}
 	
 	if(brushIndex < 0)
 	{
-		cerr << "RENDER ERROR: brush not initialized"  << endl;
+		std::cerr << "RENDER ERROR: brush not initialized"  << endl;
 		return false;
 	}
 	
@@ -1250,25 +1250,25 @@ bool ofxSpriteSheetRenderer::addCircle(float x, float y, float z, float radius, 
 	
 	if(texture == NULL)
 	{
-		cerr << "RENDER ERROR: No texture loaded!"  << endl;
+		std::cerr << "RENDER ERROR: No texture loaded!"  << endl;
 		return false;
 	}
 	
 	if(numSprites[layer] >= tilesPerLayer)
 	{
-		cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
+		std::cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
 		return false;
 	}
 	
 	if(layer > numLayers)
 	{
-		cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
+		std::cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
 		return false;
 	}
 	
 	if(brushIndex < 0)
 	{
-		cerr << "RENDER ERROR: brush not initialized"  << endl;
+		std::cerr << "RENDER ERROR: brush not initialized"  << endl;
 		return false;
 	}
 	
@@ -1522,25 +1522,25 @@ bool ofxSpriteSheetRenderer::addRect(float x, float y, float z, float w, float h
 	
 	if(texture == NULL)
 	{
-		cerr << "RENDER ERROR: No texture loaded!"  << endl;
+		std::cerr << "RENDER ERROR: No texture loaded!"  << endl;
 		return false;
 	}
 	
 	if(numSprites[layer] >= tilesPerLayer)
 	{
-		cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
+		std::cerr << "RENDER ERROR: Layer " << layer << " over allocated! Max " << tilesPerLayer << " sprites per layer!"  << endl;
 		return false;
 	}
 	
 	if(layer > numLayers)
 	{
-		cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
+		std::cerr << "RENDER ERROR: Bogus layer '" << layer << "'! Only " << numLayers << " layers compiled!"  << endl;
 		return false;
 	}
 	
 	if(brushIndex < 0)
 	{
-		cerr << "RENDER ERROR: brush not initialized"  << endl;
+		std::cerr << "RENDER ERROR: brush not initialized"  << endl;
 		return false;
 	}
 	
