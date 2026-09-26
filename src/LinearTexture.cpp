@@ -23,7 +23,8 @@ void LinearTexture::loadImage(string textureName)
 	}
 	
 	allocate(loader.getWidth(), loader.getHeight(), glType);
-	loadData(loader.getPixels());
+    loadData(loader.getPixels());
+
 	
 	loader.clear();
 }
@@ -34,7 +35,7 @@ void LinearTexture::loadTexture(string textureName, int glType)
 	loader.setUseTexture(false);
 	loader.load(textureName);
 	allocate(loader.getWidth(), loader.getHeight(), glType);
-	loadData(loader.getPixels());
+    loadData(loader.getPixels(), glType);
 	loader.clear();
 }
 
@@ -113,7 +114,7 @@ void LinearTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBE
 	//		glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, PIXEL_TYPE, 0);  // init to black...
 	glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, (GLint) texData.tex_w, (GLint) texData.tex_h, 0, internal.glType, internal.pixelType, 0);  // init to black...
 #else
-	glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, texData.tex_w, texData.tex_h, 0, internal.glInternalFormat, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, texData.tex_w, texData.tex_h, 0, internal.glType, GL_UNSIGNED_BYTE, 0);
 #endif
 	
 	
