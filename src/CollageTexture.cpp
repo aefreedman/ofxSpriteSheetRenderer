@@ -145,6 +145,7 @@ void CollageTexture::pasteImage(int x, int y, string textureName, int glType)
 	ofImage loader;
 	loader.setUseTexture(false);
 	loader.load(textureName);
+	
 	pasteImage(x, y, loader.getWidth(), loader.getHeight(), loader.getPixels().getData(), glType);
 	
 	loader.clear();
@@ -152,7 +153,7 @@ void CollageTexture::pasteImage(int x, int y, string textureName, int glType)
 
 void CollageTexture::pasteImage(int x, int y, int w, int h, unsigned char * pxls, int glType)
 {	
-	int bpp;
+	int bpp = 3;
 	
 	if(glType == GL_RGB)
 		bpp=3;
