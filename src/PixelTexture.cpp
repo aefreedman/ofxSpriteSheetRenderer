@@ -102,10 +102,22 @@ void PixelTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBEx
 	
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_NEAREST);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_NEAREST);
+	// Filtering and wrapping use different enum domains. Preserve the effective
+	// defaults left by the old invalid wrap calls: repeat for 2D, clamp for ARB.
+	GLint wrapMode = GL_REPEAT;
+#ifndef TARGET_OPENGLES
+	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB) {
+		wrapMode = GL_CLAMP_TO_EDGE;
+	}
+#endif
+	texData.minFilter = GL_NEAREST;
+	texData.magFilter = GL_NEAREST;
+	texData.wrapModeHorizontal = wrapMode;
+	texData.wrapModeVertical = wrapMode;
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, texData.wrapModeHorizontal);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, texData.wrapModeVertical);
 	
 #ifndef TARGET_OPENGLES
 	// can't do this on OpenGL ES: on full-blown OpenGL, 
