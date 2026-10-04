@@ -24,6 +24,52 @@
 
 #include "CollageTexture.h"
 
+#include <algorithm>
+#include <limits>
+#include <new>
+#include <utility>
+
+CollageTexture::CollageTexture(const CollageTexture & other)
+    : ofTexture(other), c_width(other.c_width), c_height(other.c_height),
+      c_bpp(other.c_bpp), c_type(other.c_type), internal(other.internal) {
+    if (other.collage) {
+        const size_t size = size_t(c_width) * c_height * c_bpp;
+        collage = new unsigned char[size];
+        std::copy(other.collage, other.collage + size, collage);
+    }
+}
+
+CollageTexture::CollageTexture(CollageTexture && other) noexcept
+    : ofTexture(std::move(other)), collage(other.collage), c_width(other.c_width),
+      c_height(other.c_height), c_bpp(other.c_bpp), c_type(other.c_type), internal(other.internal) {
+    other.collage = nullptr;
+    other.c_width = other.c_height = other.c_bpp = other.c_type = 0;
+}
+
+CollageTexture & CollageTexture::operator=(const CollageTexture & other) {
+    if (this != &other) {
+        CollageTexture copy(other);
+        *this = std::move(copy);
+    }
+    return *this;
+}
+
+CollageTexture & CollageTexture::operator=(CollageTexture && other) noexcept {
+    if (this != &other) {
+        ofTexture::operator=(std::move(other));
+        delete[] collage;
+        collage = other.collage;
+        c_width = other.c_width;
+        c_height = other.c_height;
+        c_bpp = other.c_bpp;
+        c_type = other.c_type;
+        internal = other.internal;
+        other.collage = nullptr;
+        other.c_width = other.c_height = other.c_bpp = other.c_type = 0;
+    }
+    return *this;
+}
+
 CollageTexture::~CollageTexture()
 {
 	delete[] collage;
@@ -35,24 +81,22 @@ void CollageTexture::allocate(int w, int h, int internalGlDataType, int internal
 
 void CollageTexture::allocate(int w, int h, int internalGlDataType, int internalGLScaleMode, bool bUseARBExtention){
 	
-	if(internalGlDataType==GL_RGB)
-		collage = new unsigned char[w*h*3];
-	else if(internalGlDataType==GL_RGBA)
-		collage = new unsigned char[w*h*4];
-	
-	c_width = w;
-	c_height = h;
-	
-	if(internalGlDataType == GL_RGB)
-		c_bpp=3;
-	else if(internalGlDataType == GL_RGBA)
-		c_bpp=4;
-	
-	for(int i=0;i<w*h*c_bpp;i++)
-	{
-		collage[i]=0;
-	}
-		
+    // Invalid requests leave the existing CPU buffer and GL ownership intact.
+    const int bpp = internalGlDataType == GL_RGB ? 3 : internalGlDataType == GL_RGBA ? 4 : 0;
+    const int maxDimension = 1 << 30; // ofNextPow2 must remain representable as int.
+    if (w <= 0 || h <= 0 || w > maxDimension || h > maxDimension || !bpp ||
+        size_t(w) > size_t(std::numeric_limits<int>::max()) / size_t(h) / size_t(bpp)) {
+        return;
+    }
+    const size_t size = size_t(w) * h * bpp;
+    unsigned char * replacement = new (std::nothrow) unsigned char[size]();
+    if (!replacement) return;
+    delete[] collage;
+    collage = replacement;
+    c_width = w;
+    c_height = h;
+    c_bpp = bpp;
+
 	c_type = internalGlDataType;
 	
 	//our graphics card might not support arb so we have to see if it is supported.
@@ -103,11 +147,15 @@ void CollageTexture::allocate(int w, int h, int internalGlDataType, int internal
 			internal.pixelType = GL_UNSIGNED_BYTE;
 	}
 	
-	// attempt to free the previous bound texture, if we can:
-	clear();
-	
-	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
-	
+    // Allocate the legacy padded size explicitly: OF may otherwise choose NPOT
+    // storage. Its supported allocator registers the ID for shared ownership.
+    const float textureT = texData.tex_t;
+    const float textureU = texData.tex_u;
+    ofTexture::allocate(int(texData.tex_w), int(texData.tex_h), internalGlDataType,
+                        bUseARBExtention, internalGlDataType, GL_UNSIGNED_BYTE);
+    texData.tex_t = textureT;
+    texData.tex_u = textureU;
+
 	glEnable(texData.textureTarget);
 	
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
@@ -129,19 +177,6 @@ void CollageTexture::allocate(int w, int h, int internalGlDataType, int internal
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, texData.wrapModeHorizontal);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, texData.wrapModeVertical);
 	
-#ifndef TARGET_OPENGLES
-	// can't do this on OpenGL ES: on full-blown OpenGL, 
-	// internalGlDataType and glDataType (GL_LUMINANCE below)
-	// can be different; on ES they must be exactly the same.
-	//		glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, PIXEL_TYPE, 0);  // init to black...
-	glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, (GLint) texData.tex_w, (GLint) texData.tex_h, 0, internal.glType, internal.pixelType, 0);  // init to black...
-#else
-	glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, texData.tex_w, texData.tex_h, 0, texData.glInternalFormat, GL_UNSIGNED_BYTE, 0);
-#endif
-	
-	
-	
-	
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	
 	glDisable(texData.textureTarget);
@@ -156,7 +191,7 @@ void CollageTexture::pasteImage(int x, int y, string textureName, int glType)
 {
 	ofImage loader;
 	loader.setUseTexture(false);
-	loader.load(textureName);
+	if (!loader.load(textureName)) return;
 	
 	pasteImage(x, y, loader.getWidth(), loader.getHeight(), loader.getPixels().getData(), glType);
 	

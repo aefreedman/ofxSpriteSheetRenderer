@@ -39,6 +39,11 @@ class CollageTexture : public ofTexture
 	
 public:
 	
+    CollageTexture() = default;
+    CollageTexture(const CollageTexture & other);
+    CollageTexture(CollageTexture && other) noexcept;
+    CollageTexture & operator=(const CollageTexture & other);
+    CollageTexture & operator=(CollageTexture && other) noexcept;
 	~CollageTexture();
 	
 	void allocate(int w, int h, int internalGlDataType, int internalGLScaleMode); // scale mode is GL_LINEAR or GL_NEAREST if you want pixel scaling
@@ -49,18 +54,18 @@ public:
 	
 	void finish();
 		
-	unsigned char * collage;
-	int c_width;
-	int c_height;
-	int c_bpp;
-	int c_type;
+	unsigned char * collage = nullptr;
+	int c_width = 0;
+	int c_height = 0;
+	int c_bpp = 0;
+	int c_type = 0;
 	
 protected:
 
 	struct {
 		GLenum glType;
 		GLenum pixelType;
-	} internal;
+	} internal = {};
 
 	int getIndex(int x, int y);
 };
